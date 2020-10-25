@@ -11,4 +11,7 @@ class neuronio:
 
 
 
-        
+
+n = neuronio([np.random.random_sample(), np.random.random_sample()])
+print(n.bias)
+print(n.weights)
