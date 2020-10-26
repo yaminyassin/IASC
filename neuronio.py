@@ -1,17 +1,18 @@
-import numpy as np
-
+class axonio:
+    def __init__(self) -> None:
+        self.peso = None
+        self.origem = None
+        self.destinatario = None
 
 
 
 class neuronio:
-    def __init__(self, weights, bias=1, lr=0.15) -> None:
-        self.weights = weights
+    def __init__(self, bias) -> None:
+       
+        self.saida = None
+        self.beta = None
         self.bias = bias
-        self.lr = lr
+        self.axonios_anteriores = []
+        self.axonios_seguintes = []
 
 
-
-
-n = neuronio([np.random.random_sample(), np.random.random_sample()])
-print(n.bias)
-print(n.weights)
