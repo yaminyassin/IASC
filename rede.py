@@ -1,10 +1,10 @@
-from neuronio import neuronio, axonio
 from camada import camada
 
 
 class rede:
     def __init__(self,*neur_por_camada):
         self.total_camadas = camada(neur_por_camada)
+        self.erros
 
 
 
