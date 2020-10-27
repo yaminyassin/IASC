@@ -1,8 +1,10 @@
 import random
 from neuronio import neuronio, axonio
+import numpy as np
+
 
 class camada:
-    def __init__(self, neur_por_camada) -> None:
+    def __init__(self, neur_por_camada):
         self.camadas = []
         
         for i in range(len(neur_por_camada)):
@@ -29,7 +31,5 @@ class camada:
                         novo_neuronio.axonios_anteriores.append(novo_axonio)
                         
         
-        for cum in self.camadas:
-            for neur in cum:
-                print("ligacao anterior = ", neur.axonios_anteriores)
-                print("ligacao seguinte = ", neur.axonios_seguintes)
+        
+       
