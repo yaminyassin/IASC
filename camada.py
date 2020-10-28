@@ -1,6 +1,6 @@
 import random
 from neuronio import neuronio, axonio
-import numpy as np
+
 
 
 class camada:
@@ -23,13 +23,11 @@ class camada:
                         #definir ligacao
                         novo_axonio = axonio()
                         novo_axonio.origem = neur_anterior
-                        novo_axonio.destinatario = novo_neuronio
+                        novo_axonio.destino = novo_neuronio
                         novo_axonio.peso = random.uniform(0, 1)
 
                         #adicionar ligacao aos neuronios
                         neur_anterior.axonios_seguintes.append(novo_axonio)
                         novo_neuronio.axonios_anteriores.append(novo_axonio)
                         
-        
-        
        

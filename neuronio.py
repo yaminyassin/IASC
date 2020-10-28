@@ -4,7 +4,7 @@ class axonio:
     def __init__(self):
         self.peso = None
         self.origem = None
-        self.destinatario = None
+        self.destino = None
 
 
 
