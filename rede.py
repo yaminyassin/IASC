@@ -1,4 +1,3 @@
-from neuronio import axonio, neuronio
 from camada import camada
 import math, random
 
@@ -8,25 +7,27 @@ class rede:
         self.erro = 1 #raiz do erro quadratico medio
 
 
-    def treinar(self, dados_treino, erro_minimo = 0.015):
+    def treinar(self, dados_treino, erro_minimo = 0.01):
         iter = 0
-        while self.erro >= erro_minimo:
+        while self.erro >= erro_minimo and iter < 20000:
 
             treino = random.choice(dados_treino)
 
             self.propagar(treino)
             self.calcular_erro_total(treino[-1])
             self.retropropagar(treino[-1])
+            self.atualizar_pesos()
+
 
             iter += 1
-            print("iter = ", iter)
-            print("entrada=", treino[:-1], " saida=", self.total_camadas.camadas[-1][0].valor)
-            print("erro = ", self.erro)
+           
             
             print("---------------------------------------")
+            print("iter = ", iter)
+            print("erro = ", self.erro)
 
-            self.print_pesos()
             self.print_rede()
+            self.print_pesos()
             self.print_betas()
             
             print("--------------------------------------")
@@ -83,10 +84,10 @@ class rede:
     atualiza os pesos nos axonios
     """
     def atualizar_pesos(self, lr=0.15):
-        for id_camada in range(len(self.total_camadas.camadas)-1, 0, -1):
+        for id_camada in range(len(self.total_camadas.camadas)-1):
             for id_neur in range(len(self.total_camadas.camadas[id_camada])):
                 neuronio = self.total_camadas.camadas[id_camada][id_neur]
-                for axonio in neuronio.axonios_anteriores:
+                for axonio in neuronio.axonios_seguintes:
                     axonio.peso += lr * axonio.origem.valor * axonio.destino.valor * (1- axonio.destino.valor) * axonio.destino.beta
                 neuronio.bias += lr * neuronio.beta
 
@@ -138,3 +139,7 @@ if __name__ == '__main__':
     print("previsao (0,0) = ", n.prever((0,0)))
     print("previsao (0,0) = ", n.prever((0,0)))
     print("previsao (1,1) = ", n.prever((1,1)))
+    print("previsao (1,0) = ", n.prever((1,0)))
+    print("previsao (0,0) = ", n.prever((0,0))) 
+    print("previsao (1,1) = ", n.prever((1,1)))
+    print("previsao (1,0) = ", n.prever((1,0)))
