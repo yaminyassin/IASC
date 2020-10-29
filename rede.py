@@ -7,28 +7,43 @@ class rede:
         self.erro = 1 #raiz do erro quadratico medio
 
 
+    def treinar(self, dados_treino, erro_minimo = 0.015):
+        iter = 0
+        while self.erro >= erro_minimo:
+            treino = random.choice(dados_treino)
+            self.propagar(treino)
+
+            self.calcular_erro_total(treino[-1])
+            self.retropropagar(treino[-1])
+            self.atualizar_pesos(lr = 0.1)
+            iter += 1
+            print("iter = ", iter)
+            print("entradas = ", treino[:-1])
+            print("esperado = ", treino[-1])
+            print("atual = ", self.total_camadas.camadas[-1][0].valor)
+            print("erro = ", self.erro)
+            print("--------------------------------------")
+    	    
+
+
+
     """
     @dados_treino é um tuplo de 3 posicoes (x, y, resultado)
     """
-    def feedforward(self, dados_treino):
+    def propagar(self, dados_treino):
 
         for i in range(len(self.total_camadas.camadas[0])):
             # neuronios da primeira camada tomam valor das entradas
             self.total_camadas.camadas[0][i].valor = dados_treino[i]
-        self.print_rede()
+
         for camada_escondida in self.total_camadas.camadas[1:]:
             for neuronio in camada_escondida:
                 somatorio = 0
                 for axonio in neuronio.axonios_anteriores:
                     somatorio += axonio.origem.valor * axonio.peso
                 somatorio += neuronio.bias
-                neuronio.valor = neuronio.funcao_ativacao(somatorio)
-
-        self.print_rede()
-        self.calcular_erro_total(dados_treino[-1])
-        self.calcular_betas(dados_treino[-1])
-        self.atualizar_pesos()
-        
+                print(somatorio)
+                neuronio.valor = math.round(neuronio.funcao_ativacao(somatorio))
 
     '''
     Calcula o erro quadratico medio da rede
@@ -37,16 +52,15 @@ class rede:
         
         self.erro = 0
         for neuronio_saida in self.total_camadas.camadas[-1]:
-            self.erro += ((valor_esperado - neuronio_saida.valor)**2)
-
-        self.erro = self.erro / len(self.total_camadas.camadas[-1])
+            self.erro += 0.5 * (valor_esperado - neuronio_saida.valor)**2
+            
         self.erro = math.sqrt(self.erro)
 
-        print("RMS = ", self.erro)
 
-
-
-    def calcular_betas(self, valor_esperado ):
+    '''
+    calcula os betas dos neuronios
+    '''
+    def retropropagar(self, valor_esperado ):
 
         for i in range(-1, -len(self.total_camadas.camadas)-1, -1):
             for neur in self.total_camadas.camadas[i]:
@@ -79,7 +93,7 @@ class rede:
     def prever(self, dados_teste):
         dados = []
         
-        self.feedforward(dados_teste)
+        self.propagar(dados_teste)
 
         for saidas in self.total_camadas.camadas[-1]:
             dados.append(round(saidas.valor))
@@ -94,9 +108,9 @@ if __name__ == '__main__':
                     (0, 1, 1),
                     (1, 0, 1),
                     (1, 1, 0)]
-    
-    while n.erro > 0.015:
-        n.feedforward(random.choice(dados_treino))
+
+
+    n.treinar(dados_treino)
 
     print("previsao (0,1) = ", n.prever((0,1)))
     print("previsao (1,0) = ", n.prever((1,0)))
