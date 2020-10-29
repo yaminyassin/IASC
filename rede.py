@@ -1,3 +1,4 @@
+from neuronio import axonio, neuronio
 from camada import camada
 import math, random
 
@@ -10,18 +11,24 @@ class rede:
     def treinar(self, dados_treino, erro_minimo = 0.015):
         iter = 0
         while self.erro >= erro_minimo:
-            treino = random.choice(dados_treino)
-            self.propagar(treino)
 
+            treino = random.choice(dados_treino)
+
+            self.propagar(treino)
             self.calcular_erro_total(treino[-1])
             self.retropropagar(treino[-1])
-            self.atualizar_pesos(lr = 0.1)
+
             iter += 1
             print("iter = ", iter)
-            print("entradas = ", treino[:-1])
-            print("esperado = ", treino[-1])
-            print("atual = ", self.total_camadas.camadas[-1][0].valor)
+            print("entrada=", treino[:-1], " saida=", self.total_camadas.camadas[-1][0].valor)
             print("erro = ", self.erro)
+            
+            print("---------------------------------------")
+
+            self.print_pesos()
+            self.print_rede()
+            self.print_betas()
+            
             print("--------------------------------------")
     	    
 
@@ -39,11 +46,10 @@ class rede:
         for camada_escondida in self.total_camadas.camadas[1:]:
             for neuronio in camada_escondida:
                 somatorio = 0
-                for axonio in neuronio.axonios_anteriores:
+                for axonio in neuronio.axonios_anteriores:         #---somatorio
                     somatorio += axonio.origem.valor * axonio.peso
                 somatorio += neuronio.bias
-                print(somatorio)
-                neuronio.valor = math.round(neuronio.funcao_ativacao(somatorio))
+                neuronio.valor = neuronio.funcao_ativacao(somatorio)
 
     '''
     Calcula o erro quadratico medio da rede
@@ -52,8 +58,8 @@ class rede:
         
         self.erro = 0
         for neuronio_saida in self.total_camadas.camadas[-1]:
-            self.erro += 0.5 * (valor_esperado - neuronio_saida.valor)**2
-            
+            self.erro += (valor_esperado - neuronio_saida.valor)**2 # ----erro quadratico medio 
+
         self.erro = math.sqrt(self.erro)
 
 
@@ -62,14 +68,16 @@ class rede:
     '''
     def retropropagar(self, valor_esperado ):
 
-        for i in range(-1, -len(self.total_camadas.camadas)-1, -1):
+        for i in range(-1, -len(self.total_camadas.camadas), -1):
             for neur in self.total_camadas.camadas[i]:
                 if i == -1: #ultima camada 
                     neur.beta = valor_esperado - neur.valor
                 else: #resto das camadas
+                    neur.beta = 0 
                     for axon in neur.axonios_seguintes:
                         neur.beta +=  axon.peso * axon.destino.valor * ( 1- axon.destino.valor) * axon.destino.beta
-                                
+                         
+
 
     """
     atualiza os pesos nos axonios
@@ -79,26 +87,39 @@ class rede:
             for id_neur in range(len(self.total_camadas.camadas[id_camada])):
                 neuronio = self.total_camadas.camadas[id_camada][id_neur]
                 for axonio in neuronio.axonios_anteriores:
-                    axonio.peso += lr * axonio.origem.valor * neuronio.valor * (1- neuronio.valor) * neuronio.beta
+                    axonio.peso += lr * axonio.origem.valor * axonio.destino.valor * (1- axonio.destino.valor) * axonio.destino.beta
                 neuronio.bias += lr * neuronio.beta
 
     '''
-    imprime a rede neuronal com o valor de cada neuronio
+    imprime a rede neuronal
     '''  
     def print_rede(self):
+        print("Valor dos neuronios")
         for i in range(len(self.total_camadas.camadas)):
             print([''.join(str(x.valor)) for x in self.total_camadas.camadas[i]])
+    
+    def print_pesos(self):
+        print("Pesos dos neuronios")
+        for i in range(len(self.total_camadas.axonios)):
+            print([''.join(str(x.peso)) for x in self.total_camadas.axonios[i]])
+
+    def print_betas(self):
+        print("Betas dos neuronios")
+        for i in range(len(self.total_camadas.camadas)):
+            print([''.join(str(x.beta)) for x in self.total_camadas.camadas[i]])
+
+
 
 
     def prever(self, dados_teste):
         dados = []
-        
         self.propagar(dados_teste)
-
         for saidas in self.total_camadas.camadas[-1]:
             dados.append(round(saidas.valor))
-        
         return dados
+
+
+
 
 if __name__ == '__main__':
     
