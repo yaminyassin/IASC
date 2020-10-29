@@ -56,7 +56,7 @@ class rede:
                 else: #resto das camadas
                     for axon in neur.axonios_seguintes:
                         neur.beta +=  axon.peso * axon.destino.valor * ( 1- axon.destino.valor) * axon.destino.beta
-                    print("anal")            
+                                
 
     """
     atualiza os pesos nos axonios
