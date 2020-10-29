@@ -18,5 +18,4 @@ class neuronio:
         self.axonios_seguintes = []
 
     def funcao_ativacao(self, somatorio):
-
         return 1/(1+math.exp(-somatorio))

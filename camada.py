@@ -11,7 +11,7 @@ class camada:
             self.camadas.append([])
 
             for n in range(neur_por_camada[i]):
-                novo_neuronio = neuronio(bias=1)
+                novo_neuronio = neuronio(bias=random.uniform(0, 1) if i != 0 else 0)
                 self.camadas[i].append(novo_neuronio)
                 
                 """
