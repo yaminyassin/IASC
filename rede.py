@@ -55,7 +55,7 @@ class rede:
                     neur.beta = valor_esperado - neur.valor
                 else: #resto das camadas
                     for axon in neur.axonios_seguintes:
-                        neur.beta =  axon.peso * axon.destino.valor * ( 1- axon.destino.valor) * axon.destino.beta
+                        neur.beta +=  axon.peso * axon.destino.valor * ( 1- axon.destino.valor) * axon.destino.beta
             
 
     """
@@ -66,8 +66,8 @@ class rede:
             for id_neur in range(len(self.total_camadas.camadas[id_camada])):
                 neuronio = self.total_camadas.camadas[id_camada][id_neur]
                 for axonio in neuronio.axonios_anteriores:
-                    axonio.peso += lr * axonio.origem.valor * (1- axonio.origem.valor) * neuronio.beta
-
+                    axonio.peso += lr * neuronio.valor * axonio.origem.valor * (1- axonio.origem.valor) * neuronio.beta
+                    neuronio += lr * neuronio.beta
 
     '''
     imprime a rede neuronal com o valor de cada neuronio

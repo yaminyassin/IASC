@@ -11,8 +11,8 @@ class axonio:
 class neuronio:
     def __init__(self, bias):
        
-        self.valor = None
-        self.beta = None
+        self.valor = 0
+        self.beta = 0
         self.bias = bias
         self.axonios_anteriores = []
         self.axonios_seguintes = []
