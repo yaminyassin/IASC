@@ -17,10 +17,7 @@ class rede:
             self.calcular_erro_total(treino[-1])
             self.retropropagar(treino[-1])
             self.atualizar_pesos()
-
-
             iter += 1
-           
             
             print("---------------------------------------")
             print("iter = ", iter)
