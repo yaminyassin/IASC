@@ -86,7 +86,7 @@ class rede:
                 neuronio = self.total_camadas.camadas[id_camada][id_neur]
                 for axonio in neuronio.axonios_seguintes:
                     axonio.peso += lr * axonio.origem.valor * axonio.destino.valor * (1- axonio.destino.valor) * axonio.destino.beta
-                neuronio.bias += lr * neuronio.beta
+                neuronio.bias += lr * neuronio.valor * (1- neuronio.valor) * neuronio.beta
 
     '''
     imprime a rede neuronal
