@@ -7,9 +7,9 @@ class rede:
         self.erro = 1 #raiz do erro quadratico medio
 
 
-    def treinar(self, dados_treino, erro_minimo = 0.01):
+    def treinar(self, dados_treino, erro_minimo = 0.01, max_iter=20000):
         iter = 0
-        while self.erro >= erro_minimo and iter < 20000:
+        while self.erro >= erro_minimo and iter < max_iter:
 
             treino = random.choice(dados_treino)
 
@@ -29,8 +29,6 @@ class rede:
             
             print("--------------------------------------")
     	    
-
-
 
     """
     @dados_treino é um tuplo de 3 posicoes (x, y, resultado)
@@ -107,16 +105,12 @@ class rede:
             print([''.join(str(x.beta)) for x in self.total_camadas.camadas[i]])
 
 
-
-
     def prever(self, dados_teste):
         dados = []
         self.propagar(dados_teste)
         for saidas in self.total_camadas.camadas[-1]:
             dados.append(round(saidas.valor))
         return dados
-
-
 
 
 if __name__ == '__main__':
@@ -128,15 +122,9 @@ if __name__ == '__main__':
                     (1, 0, 1),
                     (1, 1, 0)]
 
-
     n.treinar(dados_treino)
 
+    print("previsao (0,0) = ", n.prever((0,0)))
     print("previsao (0,1) = ", n.prever((0,1)))
-    print("previsao (1,0) = ", n.prever((1,0)))
-    print("previsao (0,0) = ", n.prever((0,0)))
-    print("previsao (0,0) = ", n.prever((0,0)))
+    print("previsao (1,0) = ", n.prever((1,0))) 
     print("previsao (1,1) = ", n.prever((1,1)))
-    print("previsao (1,0) = ", n.prever((1,0)))
-    print("previsao (0,0) = ", n.prever((0,0))) 
-    print("previsao (1,1) = ", n.prever((1,1)))
-    print("previsao (1,0) = ", n.prever((1,0)))

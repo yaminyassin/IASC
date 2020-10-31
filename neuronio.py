@@ -9,8 +9,8 @@ class axonio:
 
 
 class neuronio:
-    def __init__(self, bias):
-       
+    def __init__(self, bias, tipo="sigmoid"):
+        self.tipo = tipo
         self.valor = 0
         self.beta = 0
         self.bias = bias
@@ -18,4 +18,7 @@ class neuronio:
         self.axonios_seguintes = []
 
     def funcao_ativacao(self, x):
-        return 1/(1 + math.exp(-x))
+        if self.tipo == "sigmoid":
+            return 1/(1 + math.exp(-x))
+        elif self.tipo == "tanh":
+            return  (2 / (1 + math.exp(-2*x)) ) - 1
