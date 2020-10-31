@@ -147,7 +147,7 @@ class rede:
 
 if __name__ == '__main__':
     
-    n = rede(2,2,1)
+    n = rede(2,2,1, codificacao=1)
     
     dados_treino = [(0, 0, 0),
                     (0, 1, 1),
