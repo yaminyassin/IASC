@@ -62,10 +62,11 @@ class rede:
             iter += 1
 
             treino = random.choice(dados_treino)
-
-            self.propagar(treino)
-            self.calcular_erro_total(treino[-1])
-            self.retropropagar(treino[-1])
+            entradas = treino[0]
+            saidas = treino[1]
+            self.propagar(entradas)
+            self.calcular_erro_total(saidas)
+            self.retropropagar(saidas)
             self.atualizar_pesos(lr, alpha)
             
             print("---------------------------------------")
@@ -101,8 +102,8 @@ class rede:
     def calcular_erro_total(self, valor_esperado):
         
         self.erro = 0
-        for neuronio_saida in self.camadas.camadas[-1]:
-            self.erro += (valor_esperado - neuronio_saida.valor)**2 # ----erro quadratico medio 
+        for count, neuronio_saida in enumerate(self.camadas.camadas[-1]):
+            self.erro += (valor_esperado[count] - neuronio_saida.valor)**2 # ----erro quadratico medio 
 
         self.erro = math.sqrt(self.erro)
 
@@ -110,12 +111,12 @@ class rede:
     '''
     calcula os betas dos neuronios
     '''
-    def retropropagar(self, valor_esperado ):
+    def retropropagar(self, valor_esperado):
 
         for i in range(-1, -len(self.camadas.camadas), -1):
-            for neur in self.camadas.camadas[i]:
+            for count, neur in enumerate(self.camadas.camadas[i]):
                 if i == -1: #ultima camada 
-                    neur.beta = valor_esperado - neur.valor
+                    neur.beta = valor_esperado[count] - neur.valor
                 else: #resto das camadas
                     neur.beta = 0 
                     for axon in neur.axonios_seguintes:
@@ -162,25 +163,96 @@ class rede:
 
 
 if __name__ == '__main__':
-    dados_treino = [(0, 0, 0),
-                        (0, 1, 1),
-                        (1, 0, 1),
-                        (1, 1, 0)]
-
-    codificacao = 0
+    codificacao = 1
     funcao_ativacao = 0
-    max_iter = 14000
-    lr = 0.18
+    max_iter = 1500
+    lr = 0.13
     alpha = 0
     
+    dados_treino = [[[0, 0], [0]],
+                    [[0, 1], [1]],
+                    [[1, 0], [1]],
+                    [[1, 1], [0]]]
+    
+#    n = rede(2,2,1, codificacao=codificacao, func_ativacao=funcao_ativacao)
+#    
+#    
+#    n.treinar(dados_treino, max_iter=max_iter, lr=lr, alpha=alpha)
+#
+#    print("previsao (0,0) = ", n.prever((0,0)))
+#    print("previsao (0,1) = ", n.prever((0,1)))
+#    print("previsao (1,0) = ", n.prever((1,0))) 
+#    print("previsao (1,1) = ", n.prever((1,1)))
+#
 
+    dados_treino2 = [[ [1, 1, 1, 1,
+                        1, 0, 0, 1,
+                        1, 0, 0, 1,
+                        1, 1, 1, 1], [1, 0]],
+                    [   [1, 0, 0, 1,
+                        0, 1, 1, 0,
+                        0, 1, 1, 0,
+                        1, 0, 0, 1], [0, 1]]]
     
-    n = rede(2,2,1, codificacao=codificacao, func_ativacao=funcao_ativacao)
-    
-    
-    n.treinar(dados_treino, max_iter=max_iter, lr=lr, alpha=alpha)
+    n2 = rede(16, 8, 2, codificacao=codificacao, func_ativacao=funcao_ativacao)
 
-    print("previsao (0,0) = ", n.prever((0,0)))
-    print("previsao (0,1) = ", n.prever((0,1)))
-    print("previsao (1,0) = ", n.prever((1,0))) 
-    print("previsao (1,1) = ", n.prever((1,1)))
+    n2.treinar(dados_treino2, lr=lr, alpha=alpha, max_iter=max_iter)
+    
+
+    teste1 = [1, 1, 1, 1,
+             1, 0, 0, 1,
+             1, 0, 0, 1,
+             1, 1, 1, 1]
+
+    teste2 = [1, 0, 0, 1,
+              0, 1, 1, 0,
+              0, 1, 1, 0,
+              1, 0, 0, 1]
+
+    teste3 = [1, 1, 1, 1,
+              1, 0, 0, 1, #resultado esperado [1, 0]
+              0, 0, 0, 0,
+              0, 0, 0, 0]
+
+    teste4 = [0, 0, 0, 0,
+              0, 0, 0, 0, #resultado esperado [0, 1]
+              0, 1, 1, 0, 
+              1, 0, 0, 1]
+
+    teste5 = [1, 1, 0, 0,
+              1, 0, 0, 0, #resultado esperado [1, 0]
+              1, 0, 0, 0,
+              1, 1, 0, 0]
+
+
+
+    teste6 = [1, 0, 0, 0,
+              0, 1, 0, 0,  #resultado esperado [0, 1]
+              0, 0, 1, 0,
+              0, 0, 0, 1]
+
+    previsao1 = n2.prever(teste1)
+    previsao2 = n2.prever(teste2)
+    previsao3 = n2.prever(teste3) 
+    previsao4 = n2.prever(teste4)
+    previsao5 = n2.prever(teste5)
+    previsao6 = n2.prever(teste6)
+   
+
+    print("---------teste 1--------")
+    print([''.join(str(x)) for x in previsao1])
+
+    print("----------teste 2----------")
+    print([''.join(str(x)) for x in previsao2])
+
+    print("----------teste 3----------")
+    print([''.join(str(x)) for x in previsao3])
+
+    print("---------teste 4--------")
+    print([''.join(str(x)) for x in previsao4])
+
+    print("----------teste 5----------")
+    print([''.join(str(x)) for x in previsao5])
+
+    print("----------teste 6----------")
+    print([''.join(str(x)) for x in previsao6])
