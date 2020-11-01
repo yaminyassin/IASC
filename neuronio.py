@@ -3,10 +3,12 @@ import math
 class axonio:
     def __init__(self):
         self.peso = None
+        self.variacaoPeso = 0
         self.origem = None
         self.destino = None
 
     def atualizar_peso(self, lr, alpha=0):
+        calculo = 0 
         if alpha == 0:
             if(self.destino.tipo == 0):
                 self.peso += lr * self.origem.valor * self.destino.valor * (1 - self.destino.valor) * self.destino.beta
@@ -15,9 +17,14 @@ class axonio:
 
         else:
             if(self.destino.tipo == 0):
-                self.peso += lr * self.origem.valor * self.destino.valor * (1 - self.destino.valor) * self.destino.beta + alpha * self.peso
+                calculo = alpha * self.variacaoPeso - lr * self.origem.valor * self.destino.valor * (1 - self.destino.valor) * self.destino.beta 
+                self.peso += calculo
+                self.variacaoPeso = calculo
+                
             else:
-                self.peso += lr * self.origem.valor * (1 - self.destino.valor**2) * self.destino.beta + alpha * self.peso
+                calculo = alpha * self.variacaoPeso - lr * self.origem.valor * (1 - self.destino.valor**2) * self.destino.beta 
+                self.peso += calculo
+                self.variacaoPeso = calculo
 
               
 class neuronio:

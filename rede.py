@@ -58,8 +58,8 @@ class rede:
         alpha -> valor de momento \n
         """
         iter = 0
-        
-        while self.erro >= erro_minimo and iter < max_iter:
+        while  iter < max_iter: #self.erro >= erro_minimo and
+            iter += 1
 
             treino = random.choice(dados_treino)
 
@@ -67,16 +67,14 @@ class rede:
             self.calcular_erro_total(treino[-1])
             self.retropropagar(treino[-1])
             self.atualizar_pesos(lr, alpha)
-            iter += 1
             
             print("---------------------------------------")
             print("iter = ", iter)
+            print("alpha = ", alpha)
             print("erro = ", self.erro)
-
             self.print_rede()
             self.print_pesos()
             self.print_betas()
-            
             print("--------------------------------------")
     	    
 
@@ -128,12 +126,12 @@ class rede:
     """
     atualiza os pesos nos axonios
     """
-    def atualizar_pesos(self, lr, alpha):
+    def atualizar_pesos(self, lr,  alpha):
         for id_camada in range(len(self.camadas.camadas)-1):
             for id_neur in range(len(self.camadas.camadas[id_camada])):
                 neuronio = self.camadas.camadas[id_camada][id_neur]
                 for axonio in neuronio.axonios_seguintes:
-                    axonio.atualizar_peso(lr, alpha)
+                    axonio.atualizar_peso( lr, alpha)
                 neuronio.atualizar_bias(lr)
 
     '''
@@ -169,10 +167,10 @@ if __name__ == '__main__':
                         (1, 0, 1),
                         (1, 1, 0)]
 
-    codificacao = 1
-    funcao_ativacao = 1 
-    max_iter = 20000
-    lr = 0.15
+    codificacao = 0
+    funcao_ativacao = 0
+    max_iter = 14000
+    lr = 0.18
     alpha = 0
     
 
