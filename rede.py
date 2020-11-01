@@ -3,12 +3,11 @@ from neuronio import neuronio, axonio
 import math, random
 
 class rede:
-    def __init__(self,*neur_por_camada, codificacao = 0, tipo_ativacao=0):
-        self.camadas = self.criar_rede(neur_por_camada, codificacao)
+    def __init__(self,*neur_por_camada, codificacao = 0, func_ativacao=0):
+        self.camadas = self.criar_rede(neur_por_camada, codificacao, func_ativacao)
         self.erro = 1 
 
-
-    def criar_rede(self, neur_por_camada, codificacao):
+    def criar_rede(self, neur_por_camada, codificacao, func_ativacao):
         camadas = camada()
 
         for i in range(len(neur_por_camada)):
@@ -18,13 +17,13 @@ class rede:
 
             for n in range(neur_por_camada[i]):
 
-                novo_neuronio = neuronio(bias=1)
+                novo_neuronio = neuronio(bias=1, tipo=func_ativacao)
                 camadas.camadas[i].append(novo_neuronio)
                 
                 if i != 0: #  para criar ligacoes devemos ter pelo menos 2 camadas
                     for neur_anterior in camadas.camadas[i - 1]:
                         
-                        novo_axonio = axonio()  #definir ligacao
+                        novo_axonio = axonio()  #criar axonio
                         novo_axonio.peso = random.uniform(0, 1) if codificacao == 0 else random.uniform(-1, 1)
 
                         novo_axonio.origem = neur_anterior
@@ -103,7 +102,7 @@ class rede:
                 else: #resto das camadas
                     neur.beta = 0 
                     for axon in neur.axonios_seguintes:
-                        neur.beta +=  axon.peso * axon.destino.valor * ( 1- axon.destino.valor) * axon.destino.beta
+                        neur.calcular_beta(axon.peso, axon.destino.valor, axon.destino.beta)
                          
 
 
@@ -147,7 +146,7 @@ class rede:
 
 if __name__ == '__main__':
     
-    n = rede(2,2,1, codificacao=1)
+    n = rede(2,2,1, codificacao=0, func_ativacao=0)
     
     dados_treino = [(0, 0, 0),
                     (0, 1, 1),
