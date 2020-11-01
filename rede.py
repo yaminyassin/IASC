@@ -2,7 +2,20 @@ from camada import camada
 from neuronio import neuronio, axonio
 import math, random
 
+
+
 class rede:
+    """
+    Classe rede que representa uma rede neuronal \n
+    NOTA-SE: os pesos e bias sao inicializados com valores aleatorios dependendo do tipo de codificacao \n
+    neur_por_camada -> tuplo que representa quantos neuronios e camadas irao ser instanciados na rede \n
+    codificacao -> o tipo de codificacao a se usar:\n
+        0 -> Binario \n
+        1 -> Bipolar \n
+    func_ativacao -> o tipo de funcao de ativacao que os neuronios irao usar: \n
+        0 -> Sigmoid \n
+        1 -> Tangente Hiperbolica \n
+    """
     def __init__(self,*neur_por_camada, codificacao = 0, func_ativacao=0):
         self.camadas = self.criar_rede(neur_por_camada, codificacao, func_ativacao)
         self.erro = 1 
@@ -17,7 +30,7 @@ class rede:
 
             for n in range(neur_por_camada[i]):
 
-                novo_neuronio = neuronio(bias=1, tipo=func_ativacao)
+                novo_neuronio = neuronio(bias=random.uniform(0, 1) if codificacao == 0 else random.uniform(-1, 1), tipo=func_ativacao)
                 camadas.camadas[i].append(novo_neuronio)
                 
                 if i != 0: #  para criar ligacoes devemos ter pelo menos 2 camadas
@@ -33,11 +46,17 @@ class rede:
                         neur_anterior.axonios_seguintes.append(novo_axonio)
                         novo_neuronio.axonios_anteriores.append(novo_axonio)
                         camadas.axonios[i].append(novo_axonio)
-
         return camadas
 
-
-    def treinar(self, dados_treino, erro_minimo = 0.01, max_iter=20000, lr=0.15):
+    #BUG corrigir erro minimo
+    def treinar(self, dados_treino, erro_minimo = 0.00001, max_iter=20000, lr=0.15, alpha=0):
+        """
+        dados_treino -> array com dados de treino, em que a ultima camada é o valor esperado \n
+        erro_minimo -> erro \n
+        max_iter -> iteracoes maximas da rede \n 
+        lr -> taxa de aprendizagem \n
+        alpha -> valor de momento \n
+        """
         iter = 0
         
         while self.erro >= erro_minimo and iter < max_iter:
@@ -47,7 +66,7 @@ class rede:
             self.propagar(treino)
             self.calcular_erro_total(treino[-1])
             self.retropropagar(treino[-1])
-            self.atualizar_pesos(lr)
+            self.atualizar_pesos(lr, alpha)
             iter += 1
             
             print("---------------------------------------")
@@ -109,13 +128,13 @@ class rede:
     """
     atualiza os pesos nos axonios
     """
-    def atualizar_pesos(self, lr):
+    def atualizar_pesos(self, lr, alpha):
         for id_camada in range(len(self.camadas.camadas)-1):
             for id_neur in range(len(self.camadas.camadas[id_camada])):
                 neuronio = self.camadas.camadas[id_camada][id_neur]
                 for axonio in neuronio.axonios_seguintes:
-                    axonio.peso += lr * axonio.origem.valor * axonio.destino.valor * (1 - axonio.destino.valor) * axonio.destino.beta
-                neuronio.bias += lr * neuronio.valor * (1 - neuronio.valor) * neuronio.beta
+                    axonio.atualizar_peso(lr, alpha)
+                neuronio.atualizar_bias(lr)
 
     '''
     imprime a rede neuronal
@@ -145,15 +164,23 @@ class rede:
 
 
 if __name__ == '__main__':
-    
-    n = rede(2,2,1, codificacao=0, func_ativacao=0)
-    
     dados_treino = [(0, 0, 0),
-                    (0, 1, 1),
-                    (1, 0, 1),
-                    (1, 1, 0)]
+                        (0, 1, 1),
+                        (1, 0, 1),
+                        (1, 1, 0)]
 
-    n.treinar(dados_treino, lr=0.15, max_iter=20000)
+    codificacao = 1
+    funcao_ativacao = 1 
+    max_iter = 20000
+    lr = 0.15
+    alpha = 0
+    
+
+    
+    n = rede(2,2,1, codificacao=codificacao, func_ativacao=funcao_ativacao)
+    
+    
+    n.treinar(dados_treino, max_iter=max_iter, lr=lr, alpha=alpha)
 
     print("previsao (0,0) = ", n.prever((0,0)))
     print("previsao (0,1) = ", n.prever((0,1)))

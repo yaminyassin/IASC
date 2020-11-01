@@ -6,9 +6,28 @@ class axonio:
         self.origem = None
         self.destino = None
 
+    def atualizar_peso(self, lr, alpha=0):
+        if alpha == 0:
+            if(self.destino.tipo == 0):
+                self.peso += lr * self.origem.valor * self.destino.valor * (1 - self.destino.valor) * self.destino.beta
+            else:
+                self.peso += lr * self.origem.valor * (1 - self.destino.valor**2) * self.destino.beta
 
+        else:
+            if(self.destino.tipo == 0):
+                self.peso += lr * self.origem.valor * self.destino.valor * (1 - self.destino.valor) * self.destino.beta + alpha * self.peso
+            else:
+                self.peso += lr * self.origem.valor * (1 - self.destino.valor**2) * self.destino.beta + alpha * self.peso
 
+              
 class neuronio:
+    """
+    classe que representa um neuronio.
+
+    @tipo -> tipo de funcao de ativacao a usar
+        0 -> sigmoid
+        1 -> tangente Hiperbolica
+    """
     def __init__(self, bias, tipo=0):
         self.tipo = tipo
         self.valor = 0
@@ -32,4 +51,13 @@ class neuronio:
 
     
     def calcular_beta(self, peso, destino_valor, destino_beta):
-        self.beta += peso * destino_valor * ( 1- destino_valor) * destino_beta
+        if self.tipo == 0:
+            self.beta += peso * (destino_valor * ( 1- destino_valor)) * destino_beta
+        elif self.tipo == 1:
+            self.beta += peso * (1 - destino_valor**2) *  destino_beta
+    
+    def atualizar_bias(self, lr):
+        if(self.tipo == 0):
+            self.bias += lr * self.valor * (1 - self.valor) * self.beta
+        else:
+            self.bias += lr * (1 - self.valor**2) * self.beta
