@@ -29,11 +29,11 @@ class axonio:
               
 class neuronio:
     """
-    classe que representa um neuronio.
+    classe que representa um neuronio. \n
 
-    @tipo -> tipo de funcao de ativacao a usar
-        0 -> sigmoid
-        1 -> tangente Hiperbolica
+    @tipo -> tipo de funcao de ativacao a usar \n
+        0 -> sigmoid \n
+        1 -> tangente Hiperbolica \n
     """
     def __init__(self, bias, tipo=0):
         self.tipo = tipo

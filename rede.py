@@ -164,9 +164,9 @@ class rede:
 
 if __name__ == '__main__':
     codificacao = 1
-    funcao_ativacao = 0
+    funcao_ativacao = 1
     max_iter = 1500
-    lr = 0.13
+    lr = 0.11
     alpha = 0
     
     dados_treino = [[[0, 0], [0]],
@@ -174,16 +174,12 @@ if __name__ == '__main__':
                     [[1, 0], [1]],
                     [[1, 1], [0]]]
     
-#    n = rede(2,2,1, codificacao=codificacao, func_ativacao=funcao_ativacao)
-#    
-#    
-#    n.treinar(dados_treino, max_iter=max_iter, lr=lr, alpha=alpha)
-#
-#    print("previsao (0,0) = ", n.prever((0,0)))
-#    print("previsao (0,1) = ", n.prever((0,1)))
-#    print("previsao (1,0) = ", n.prever((1,0))) 
-#    print("previsao (1,1) = ", n.prever((1,1)))
-#
+    n = rede(2,2,1, codificacao=codificacao, func_ativacao=funcao_ativacao)
+    
+    
+    n.treinar(dados_treino, max_iter=max_iter, lr=lr, alpha=alpha)
+
+    
 
     dados_treino2 = [[ [1, 1, 1, 1,
                         1, 0, 0, 1,
@@ -194,7 +190,7 @@ if __name__ == '__main__':
                         0, 1, 1, 0,
                         1, 0, 0, 1], [0, 1]]]
     
-    n2 = rede(16, 8, 2, codificacao=codificacao, func_ativacao=funcao_ativacao)
+    n2 = rede(16, 8, 4, 2, codificacao=codificacao, func_ativacao=funcao_ativacao)
 
     n2.treinar(dados_treino2, lr=lr, alpha=alpha, max_iter=max_iter)
     
@@ -237,7 +233,13 @@ if __name__ == '__main__':
     previsao4 = n2.prever(teste4)
     previsao5 = n2.prever(teste5)
     previsao6 = n2.prever(teste6)
-   
+
+
+    print("previsao (0,0) = ", n.prever((0,0)))
+    print("previsao (0,1) = ", n.prever((0,1)))
+    print("previsao (1,0) = ", n.prever((1,0))) 
+    print("previsao (1,1) = ", n.prever((1,1)))
+
 
     print("---------teste 1--------")
     print([''.join(str(x)) for x in previsao1])
