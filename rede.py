@@ -1,6 +1,7 @@
 from camada import camada
 from neuronio import neuronio, axonio
 import math, random
+import numpy as np
 
 
 
@@ -30,7 +31,9 @@ class rede:
 
             for n in range(neur_por_camada[i]):
 
-                novo_neuronio = neuronio(bias=random.uniform(0, 1) if codificacao == 0 else random.uniform(-1, 1), tipo=func_ativacao)
+                #novo_neuronio = neuronio(bias=random.uniform(0, 1) if codificacao == 0 else random.uniform(-1, 1), tipo=func_ativacao)
+
+                novo_neuronio = neuronio(bias=1, tipo=func_ativacao)
                 camadas.camadas[i].append(novo_neuronio)
                 
                 if i != 0: #  para criar ligacoes devemos ter pelo menos 2 camadas
@@ -49,7 +52,7 @@ class rede:
         return camadas
 
     #BUG corrigir erro minimo
-    def treinar(self, dados_treino, erro_minimo = 0.00001, max_iter=20000, lr=0.15, alpha=0):
+    def treinar(self, dados_treino, erro_minimo = 0.03, max_iter=20000, lr=0.15, alpha=0):
         """
         dados_treino -> array com dados de treino, em que a ultima camada é o valor esperado \n
         erro_minimo -> erro \n
@@ -57,8 +60,9 @@ class rede:
         lr -> taxa de aprendizagem \n
         alpha -> valor de momento \n
         """
+
         iter = 0
-        while  iter < max_iter: #self.erro >= erro_minimo and
+        while  iter < max_iter and self.erro >= erro_minimo: #self.erro >= erro_minimo and
             iter += 1
 
             treino = random.choice(dados_treino)
@@ -69,14 +73,14 @@ class rede:
             self.retropropagar(saidas)
             self.atualizar_pesos(lr, alpha)
             
-            print("---------------------------------------")
-            print("iter = ", iter)
-            print("alpha = ", alpha)
-            print("erro = ", self.erro)
-            self.print_rede()
-            self.print_pesos()
-            self.print_betas()
-            print("--------------------------------------")
+        print("---------------------------------------")
+        print("iter = ", iter)
+        print("alpha = ", alpha)
+        print("erro = ", self.erro)
+        self.print_rede()
+        self.print_pesos()
+        self.print_betas()
+        print("--------------------------------------")
     	    
 
     """
@@ -104,7 +108,6 @@ class rede:
         self.erro = 0
         for count, neuronio_saida in enumerate(self.camadas.camadas[-1]):
             self.erro += (valor_esperado[count] - neuronio_saida.valor)**2 # ----erro quadratico medio 
-
         self.erro = math.sqrt(self.erro)
 
 
@@ -163,23 +166,58 @@ class rede:
 
 
 if __name__ == '__main__':
-    codificacao = 1
-    funcao_ativacao = 1
-    max_iter = 1500
-    lr = 0.11
+
+
+    codificacao = funcao_ativacao = 1
+    max_iter = 20000
+
+    lr = [0.05, 0.1, 0.15, 0.2, 0.5, 1, 2]
+
     alpha = 0
+    erro = 0.0010
     
     dados_treino = [[[0, 0], [0]],
                     [[0, 1], [1]],
                     [[1, 0], [1]],
                     [[1, 1], [0]]]
     
-    n = rede(2,2,1, codificacao=codificacao, func_ativacao=funcao_ativacao)
-    
-    
-    n.treinar(dados_treino, max_iter=max_iter, lr=lr, alpha=alpha)
+   
 
     
+    
+    resultado = np.zeros((1000, len(lr)))
+
+    for i in range(len(resultado)):
+
+        res = np.zeros(len(lr))
+
+        for j in range(len(lr)):
+            n = rede(2,2,1, codificacao=codificacao, func_ativacao=funcao_ativacao)
+            n.treinar(dados_treino, max_iter=max_iter, lr=lr[j], alpha=alpha, erro_minimo=erro)
+
+            acertos_por_iter = 0
+
+            acertos_por_iter += 1 if dados_treino[0][1] == n.prever([0,0]) else 0
+            acertos_por_iter += 1 if dados_treino[1][1] == n.prever([0,1]) else 0
+            acertos_por_iter += 1 if dados_treino[2][1] == n.prever([1,0]) else 0
+            acertos_por_iter += 1 if dados_treino[3][1] == n.prever([1,1]) else 0
+
+            print("previsao (0,0) = ", n.prever((0,0)))
+            print("previsao (0,1) = ", n.prever((0,1)))
+            print("previsao (1,0) = ", n.prever((1,0))) 
+            print("previsao (1,1) = ", n.prever((1,1)))
+
+            acertos_por_iter /= 4
+
+            res[j] = acertos_por_iter
+
+        resultado[i] = res
+
+        print(np.mean(resultado, axis=0))
+
+
+
+
 
     dados_treino2 = [[ [1, 1, 1, 1,
                         1, 0, 0, 1,
@@ -189,19 +227,21 @@ if __name__ == '__main__':
                         0, 1, 1, 0,
                         0, 1, 1, 0,
                         1, 0, 0, 1], [0, 1]]]
-    
-    n2 = rede(16, 8, 4, 2, codificacao=codificacao, func_ativacao=funcao_ativacao)
+
+
+    '''
+    n2 = rede(16, 1, 2, codificacao=codificacao, func_ativacao=funcao_ativacao)
 
     n2.treinar(dados_treino2, lr=lr, alpha=alpha, max_iter=max_iter)
     
 
     teste1 = [1, 1, 1, 1,
-             1, 0, 0, 1,
+             1, 0, 0, 1, #resultado esperado [1, 0]
              1, 0, 0, 1,
              1, 1, 1, 1]
 
     teste2 = [1, 0, 0, 1,
-              0, 1, 1, 0,
+              0, 1, 1, 0, #resultado esperado [0, 1]
               0, 1, 1, 0,
               1, 0, 0, 1]
 
@@ -220,8 +260,6 @@ if __name__ == '__main__':
               1, 0, 0, 0,
               1, 1, 0, 0]
 
-
-
     teste6 = [1, 0, 0, 0,
               0, 1, 0, 0,  #resultado esperado [0, 1]
               0, 0, 1, 0,
@@ -233,13 +271,6 @@ if __name__ == '__main__':
     previsao4 = n2.prever(teste4)
     previsao5 = n2.prever(teste5)
     previsao6 = n2.prever(teste6)
-
-
-    print("previsao (0,0) = ", n.prever((0,0)))
-    print("previsao (0,1) = ", n.prever((0,1)))
-    print("previsao (1,0) = ", n.prever((1,0))) 
-    print("previsao (1,1) = ", n.prever((1,1)))
-
 
     print("---------teste 1--------")
     print([''.join(str(x)) for x in previsao1])
@@ -258,3 +289,5 @@ if __name__ == '__main__':
 
     print("----------teste 6----------")
     print([''.join(str(x)) for x in previsao6])
+
+    '''
