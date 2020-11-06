@@ -20,6 +20,7 @@ class rede:
     def __init__(self,*neur_por_camada, codificacao = 0, func_ativacao=0):
         self.camadas = self.criar_rede(neur_por_camada, codificacao, func_ativacao)
         self.erro = 1 
+        self.iter = 0
 
     def criar_rede(self, neur_por_camada, codificacao, func_ativacao):
         camadas = camada()
@@ -61,9 +62,9 @@ class rede:
         alpha -> valor de momento \n
         """
 
-        iter = 0
-        while  iter < max_iter and self.erro >= erro_minimo: #self.erro >= erro_minimo and
-            iter += 1
+        self.iter = 0
+        while  self.iter < max_iter and self.erro >= erro_minimo: #self.erro >= erro_minimo and
+            self.iter += 1
 
             treino = random.choice(dados_treino)
             entradas = treino[0]
@@ -74,12 +75,12 @@ class rede:
             self.atualizar_pesos(lr, alpha)
             
         print("---------------------------------------")
-        print("iter = ", iter)
-        print("alpha = ", alpha)
-        print("erro = ", self.erro)
-        self.print_rede()
-        self.print_pesos()
-        self.print_betas()
+        print("iter = ", self.iter)
+        #print("alpha = ", alpha)
+        #print("erro = ", self.erro)
+        #self.print_rede()
+        #self.print_pesos()
+        #self.print_betas()
         print("--------------------------------------")
     	    
 
@@ -136,7 +137,7 @@ class rede:
                 neuronio = self.camadas.camadas[id_camada][id_neur]
                 for axonio in neuronio.axonios_seguintes:
                     axonio.atualizar_peso( lr, alpha)
-                neuronio.atualizar_bias(lr)
+                neuronio.atualizar_bias(lr, alpha)
 
     '''
     imprime a rede neuronal
@@ -166,56 +167,56 @@ class rede:
 
 
 if __name__ == '__main__':
-
-
-    codificacao = funcao_ativacao = 1
-    max_iter = 20000
-
-    lr = [0.05, 0.1, 0.15, 0.2, 0.5, 1, 2]
-
-    alpha = 0
-    erro = 0.0010
-    
     dados_treino = [[[0, 0], [0]],
                     [[0, 1], [1]],
                     [[1, 0], [1]],
                     [[1, 1], [0]]]
     
-   
-
+    codificacao = funcao_ativacao = 1
+    max_iter = 20000
+    lr = [0.05, 0.1, 0.2, 0.5, 1]
+    alpha = [0, 0.2, 0.5, 0.8]
+    erro = 0.1
+    num_treinos = 10
     
     
-    resultado = np.zeros((1000, len(lr)))
 
-    for i in range(len(resultado)):
+    for a in range(len(alpha)):
+        resultado = np.zeros((num_treinos, len(lr)))
 
-        res = np.zeros(len(lr))
+        for i in range(len(resultado)):
+            res = np.zeros(len(lr))
 
-        for j in range(len(lr)):
-            n = rede(2,2,1, codificacao=codificacao, func_ativacao=funcao_ativacao)
-            n.treinar(dados_treino, max_iter=max_iter, lr=lr[j], alpha=alpha, erro_minimo=erro)
+            for j in range(len(lr)):
+                print("lr = {}, alpha = {}".format(lr[j], alpha[a]))
+                n = rede(2,2,1, codificacao=codificacao, func_ativacao=funcao_ativacao)
 
-            acertos_por_iter = 0
+                n.treinar(dados_treino, max_iter=max_iter, lr=lr[j], alpha=alpha[a], erro_minimo=erro)
+                
+                
+                acertos_por_iter = 0
+                acertos_por_iter += 1 if dados_treino[0][1] == n.prever([0,0]) else 0
+                acertos_por_iter += 1 if dados_treino[1][1] == n.prever([0,1]) else 0
+                acertos_por_iter += 1 if dados_treino[2][1] == n.prever([1,0]) else 0
+                acertos_por_iter += 1 if dados_treino[3][1] == n.prever([1,1]) else 0
+                acertos_por_iter /= 4
 
-            acertos_por_iter += 1 if dados_treino[0][1] == n.prever([0,0]) else 0
-            acertos_por_iter += 1 if dados_treino[1][1] == n.prever([0,1]) else 0
-            acertos_por_iter += 1 if dados_treino[2][1] == n.prever([1,0]) else 0
-            acertos_por_iter += 1 if dados_treino[3][1] == n.prever([1,1]) else 0
+                #res[j] = acertos_por_iter  # PERCENTAGEM DE ACERTOS 
+                
+                res[j] = n.iter  #NUMERO DE ITERACOES
+            
+            resultado[i] = res
 
-            print("previsao (0,0) = ", n.prever((0,0)))
-            print("previsao (0,1) = ", n.prever((0,1)))
-            print("previsao (1,0) = ", n.prever((1,0))) 
-            print("previsao (1,1) = ", n.prever((1,1)))
+        media = np.array([np.mean(resultado, axis=0)])
 
-            acertos_por_iter /= 4
+        indices = np.array([lr])
+        resultado = np.append(resultado, media, axis=0)
 
-            res[j] = acertos_por_iter
+        final = np.append(indices, resultado, axis=0)
 
-        resultado[i] = res
-
-        print(np.mean(resultado, axis=0))
-
-
+        fmt = '%1.2f', '%d' 
+        print("media={}".format(media))
+        np.savetxt("alpha={}.csv".format(alpha[a]), final, delimiter=",", fmt='%1.2f')
 
 
 

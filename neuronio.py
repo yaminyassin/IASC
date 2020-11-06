@@ -33,6 +33,7 @@ class neuronio:
         self.valor = 0
         self.beta = 0
         self.bias = bias
+        self.varBias = 0
         self.axonios_anteriores = []
         self.axonios_seguintes = []
 
@@ -56,8 +57,10 @@ class neuronio:
         elif self.tipo == 1:
             self.beta += peso * (1 - destino_valor**2) *  destino_beta
     
-    def atualizar_bias(self, lr):
+    def atualizar_bias(self, lr, alpha):
         if(self.tipo == 0):
-            self.bias += lr * self.valor * (1 - self.valor) * self.beta
+            self.varBias = alpha * self.varBias + lr * self.valor * (1 - self.valor) * self.beta
+            self.bias += self.varBias
         else:
-            self.bias += lr * (1 - self.valor**2) * self.beta
+            self.varBias = alpha * self.varBias + lr * (1 - self.valor**2) * self.beta
+            self.bias += self.varBias
