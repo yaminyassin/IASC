@@ -52,7 +52,7 @@ class rede:
                         camadas.axonios[i].append(novo_axonio)
         return camadas
 
-    #BUG corrigir erro minimo
+
     def treinar(self, dados_treino, erro_minimo = 0.03, max_iter=20000, lr=0.15, alpha=0):
         """
         dados_treino -> array com dados de treino, em que a ultima camada é o valor esperado \n
@@ -63,7 +63,7 @@ class rede:
         """
 
         self.iter = 0
-        while  self.iter < max_iter and self.erro >= erro_minimo: #self.erro >= erro_minimo and
+        while  self.iter < max_iter and self.erro >= erro_minimo: 
             self.iter += 1
 
             treino = random.choice(dados_treino)
@@ -175,10 +175,9 @@ if __name__ == '__main__':
     codificacao = funcao_ativacao = 1
     max_iter = 20000
     lr = [0.05, 0.1, 0.2, 0.5, 1]
-    alpha = [0, 0.2, 0.5, 0.8]
+    alpha = [0, 0.2, 0.5, 1]
     erro = 0.1
     num_treinos = 10
-    
     
 
     for a in range(len(alpha)):
@@ -213,11 +212,11 @@ if __name__ == '__main__':
         resultado = np.append(resultado, media, axis=0)
 
         final = np.append(indices, resultado, axis=0)
+        final = np.insert(final, 0, range(num_treinos+2), axis=1)
 
-        fmt = '%1.2f', '%d' 
         print("media={}".format(media))
-        np.savetxt("alpha={}.csv".format(alpha[a]), final, delimiter=",", fmt='%1.2f')
-
+        np.savetxt("erro=0.1alpha={}.csv".format(alpha[a]), final, delimiter=",", fmt='%1.2f')
+        
 
 
     dados_treino2 = [[ [1, 1, 1, 1,

@@ -1,5 +1,4 @@
 import math
-
 class axonio:
     def __init__(self):
         self.peso = None
@@ -11,14 +10,14 @@ class axonio:
         """
         condicao de calculo dependendo do tipo de funcao de ativacao e alfa
         """
+        incremento = 0
+        momento = alpha * self.varPeso
         if(self.destino.tipo == 0):
-            self.varPeso =  alpha * self.varPeso + lr * ( self.origem.valor * self.destino.valor * (1 - self.destino.valor) * self.destino.beta )
-            self.peso += self.varPeso
-
+            incremento = momento  + lr * self.origem.valor * self.destino.valor * (1 - self.destino.valor) * self.destino.beta 
         else:
-            self.varPeso = alpha * self.varPeso + lr * ( self.origem.valor * (1 - self.destino.valor**2) * self.destino.beta )
-            self.peso += self.varPeso
-
+            incremento = momento + lr *  self.origem.valor * (1 - self.destino.valor**2) * self.destino.beta 
+        self.peso += incremento
+        self.varPeso = incremento
               
 class neuronio:
     """
@@ -45,22 +44,24 @@ class neuronio:
             return  self.__tanh(x)
 
     def __sigmoid(self, x):
-        return 1/(1 + math.exp(-x))
+        return 1/(1 + math.exp(x)) if x<0 else 1/(1 + math.exp(-x))
 
     def __tanh(self, x):
-        return (2 / (1 + math.exp(-2*x)) ) - 1
+        return math.tanh(x)
 
     
     def calcular_beta(self, peso, destino_valor, destino_beta):
         if self.tipo == 0:
-            self.beta += peso * (destino_valor * ( 1- destino_valor)) * destino_beta
+            self.beta += peso * destino_valor * ( 1- destino_valor) * destino_beta
         elif self.tipo == 1:
             self.beta += peso * (1 - destino_valor**2) *  destino_beta
     
     def atualizar_bias(self, lr, alpha):
+        incremento = 0
+        momento = alpha * self.varBias
         if(self.tipo == 0):
-            self.varBias = alpha * self.varBias + lr * self.valor * (1 - self.valor) * self.beta
-            self.bias += self.varBias
+            incremento = momento + lr * self.valor * (1 - self.valor) * self.beta
         else:
-            self.varBias = alpha * self.varBias + lr * (1 - self.valor**2) * self.beta
-            self.bias += self.varBias
+            incremento = momento + lr * (1 - self.valor**2) * self.beta
+        self.bias += incremento
+        self.varBias = incremento
