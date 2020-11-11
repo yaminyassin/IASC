@@ -1,4 +1,5 @@
 import math
+from scipy.special import expit
 class axonio:
     def __init__(self):
         self.peso = None
@@ -44,7 +45,8 @@ class neuronio:
             return  self.__tanh(x)
 
     def __sigmoid(self, x):
-        return 1/(1 + math.exp(x)) if x<0 else 1/(1 + math.exp(-x))
+        sig = expit(x)
+        return sig
 
     def __tanh(self, x):
         return math.tanh(x)
