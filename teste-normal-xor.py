@@ -8,10 +8,10 @@ if __name__ == '__main__':
                     [[1, 0], [1]],
                     [[1, 1], [0]]]
     
-    codificacao = funcao_ativacao = 0
-    max_iter = 20000
-    lr = [0.1, 0.15, 0.2]
-    alpha = [0.1]
+    codificacao = funcao_ativacao = 1
+    max_iter = 10000
+    lr = [0.01]
+    alpha = [0.9]
     erro = 0.1
     num_treinos = 10
     isRandom = True
@@ -49,14 +49,14 @@ if __name__ == '__main__':
         resultado = np.append(resultado, media, axis=0)
         final = np.append(indices, resultado, axis=0)
         final = np.insert(final, 0, range(num_treinos+2), axis=1)
-        np.savetxt("xor_iter_alfa={}.csv".format(alpha[a]), final, delimiter=",", fmt='%1.2f')
+        np.savetxt("xor_iter_alfa={}_codif={}.csv".format(alpha[a], codificacao), final, delimiter=",", fmt='%1.2f')
         
         media2 = np.array([np.mean(resultado2, axis=0)])
         
         resultado2 = np.append(resultado2, media2, axis=0)
         final2 = np.append(indices, resultado2, axis=0)
         final2 = np.insert(final2, 0, range(num_treinos+2), axis=1)
-        np.savetxt("xor_freq2_alfa={}.csv".format(alpha[a]), final2, delimiter=",", fmt='%1.2f')
+        np.savetxt("xor_freq2_alfa={}_codif={}.csv".format(alpha[a], codificacao), final2, delimiter=",", fmt='%1.2f')
         
 
 
