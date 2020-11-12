@@ -86,11 +86,11 @@ class rede:
         print("--------------------------------------")
     	    
 
-    """
-    @dados_treino é um tuplo de 3 posicoes (x, y, resultado)
-    """
+   
     def propagar(self, dados_treino):
-
+        """
+        @dados_treino array com dados para de treinar
+        """
         for i in range(len(self.camadas.camadas[0])):
             # neuronios da primeira camada tomam valor das entradas
             self.camadas.camadas[0][i].valor = dados_treino[i]
@@ -103,22 +103,22 @@ class rede:
                 somatorio += neuronio.bias
                 neuronio.valor = neuronio.funcao_ativacao(somatorio)
 
-    '''
-    Calcula o erro quadratico medio da rede
-    '''
+   
     def calcular_erro_total(self, valor_esperado):
-        
+        '''
+        Calcula o erro quadratico medio da rede
+        '''
         self.erro = 0
         for count, neuronio_saida in enumerate(self.camadas.camadas[-1]):
             self.erro += (valor_esperado[count] - neuronio_saida.valor)**2 # ----erro quadratico medio 
         self.erro = math.sqrt(self.erro)
 
 
-    '''
-    calcula os betas dos neuronios
-    '''
+    
     def retropropagar(self, valor_esperado):
-
+        '''
+        calcula os betas dos neuronios
+        '''
         for i in range(-1, -len(self.camadas.camadas), -1):
             for count, neur in enumerate(self.camadas.camadas[i]):
                 if i == -1: #ultima camada 
@@ -130,10 +130,11 @@ class rede:
                          
 
 
-    """
-    atualiza os pesos nos axonios
-    """
+    
     def atualizar_pesos(self, lr,  alpha):
+        """
+        atualiza os pesos nos axonios
+        """
         for id_camada in range(len(self.camadas.camadas)-1):
             for id_neur in range(len(self.camadas.camadas[id_camada])):
                 neuronio = self.camadas.camadas[id_camada][id_neur]
@@ -141,9 +142,7 @@ class rede:
                     axonio.atualizar_peso( lr, alpha)
                 neuronio.atualizar_bias(lr, alpha)
 
-    '''
-    imprime a rede neuronal
-    '''  
+    '''  imprime a rede neuronal '''  
     def print_rede(self):
         print("Valor dos neuronios")
         for i in range(len(self.camadas.camadas)):
@@ -161,6 +160,7 @@ class rede:
 
 
     def prever(self, dados_teste):
+        '''  Preve os dados de teste e devolve os resultados '''
         dados = []
         self.propagar(dados_teste)
         for saidas in self.camadas.camadas[-1]:
